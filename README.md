@@ -15,9 +15,13 @@ When making commits...
 
 ### Project Plan
 11/15 - 11/18: Basic GUI
+
 11/19 - 11/25: Card game logic written out (Cards should also be implemented as classes and types at this point)
+
 11/26 - 12/2:  Card game logic implemented in GUI
+
 12/3 - 12/9:   Saving, loading, polishing
 
 ### Log
 11/15 - Create team, plan out game, discuss code style, create this readme
+11/19 - basic gui
