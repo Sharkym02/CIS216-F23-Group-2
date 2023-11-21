@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk, TclError, filedialog, font
 #from tkinter.scrolledtext import ScrolledText as Text
 #from tkinter.colorchooser import askcolor
+from gamelogic.py import Card
 
 class GameCanvas(Canvas):
 	def __init__(self, root, *args, **kwargs):
