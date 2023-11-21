@@ -16,7 +16,7 @@ class CardManager:
         
     def createDeck(self):
     # make a deck with each card in it
-        for x in range[13]:
-            for y in range [4]:
+        for x in range(1, 14):
+            for y in range(4):
                 self.deck[x+13*(y)] = Card(x, y, 0)
                 
