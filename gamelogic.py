@@ -21,6 +21,10 @@ class Card:
 		self.faceUp = faceUp
 
 	def __str__(self) -> str:
+		"""Returns a string representation of the card. Useful for debugging.
+		Example: str(card) returns "(2, HEART, up)" for a card that has a value
+		of 2, is of the heart suit, and is currently facing up.
+		"""
 		s = f"({self.value}, {TYPE(self.suit).name}, "
 		s+= self.faceUp and "up" or "down"
 		s+=")"
