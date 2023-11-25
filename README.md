@@ -7,6 +7,12 @@ This is a solitaire game in Python & Tk
 - Canvas drawing
 - Save high scores, load high scores
 
+# Credits
+
+Card sprites are from https://kenney.nl/assets/playing-cards-pack
+
+Licensed [Creative Commons CC0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain)
+
 ### Code style guidelines
 When making commits...
 
@@ -24,4 +30,7 @@ When making commits...
 
 ### Log
 11/15 - Create team, plan out game, discuss code style, create this readme
+
 11/19 - basic gui
+
+11/25 - More adjustment to card code, improve canvas code
