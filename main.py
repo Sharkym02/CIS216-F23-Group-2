@@ -24,8 +24,9 @@ class GameCanvas(Canvas):
 			for i in range(len(col)):
 				card = col[i]
 				image = pool.get_image(col[i])
+
 				#args are xPos, yPos, image, anchor
-				self.create_image(50+colNum*50,50+i*10,image=image,anchor=CENTER)
+				self.create_image(50+colNum*50,50+i*16,image=image,anchor=CENTER)
 
 		
 		return

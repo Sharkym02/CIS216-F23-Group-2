@@ -16,19 +16,35 @@ class TYPE(IntEnum):
 class Card:
 	def __init__(self, value:int, suit:int, faceUp:bool):
 		# spade: 0, heart: 1, club: 2, diamond: 3
-		self.value = value
-		self.suit = suit
-		self.faceUp = faceUp
+		self.__value = value
+		self.__suit = suit
+		self.__faceUp = faceUp
 
 	def __str__(self) -> str:
 		"""Returns a string representation of the card. Useful for debugging.
 		Example: str(card) returns "(2, HEART, up)" for a card that has a value
 		of 2, is of the heart suit, and is currently facing up.
 		"""
-		s = f"({self.value}, {TYPE(self.suit).name}, "
-		s+= self.faceUp and "up" or "down"
+		s = f"({self.__value}, {TYPE(self.__suit).name}, "
+		s+= self.__faceUp and "up" or "down"
 		s+=")"
 		return s
+	
+	@property
+	def value(self):
+		return self.__value
+	
+	@property
+	def suit(self):
+		return self.__suit
+	
+	@property
+	def faceUp(self):
+		return self.__faceUp
+	
+	@faceUp.setter # TODO: Somehow correctly set up setter for the faceUp value.
+	def faceUp(self, faceUp:bool):
+		self.__faceUp = faceUp
 
 #Loads all images into memory
 class PyTkImagePool():
@@ -43,16 +59,20 @@ class PyTkImagePool():
 				file_name = path.join("Assets", suit.name.lower()+"s_"+str(card_num).zfill(2)+".png")
 
 				self.d[val] = PhotoImage(file=file_name)
+				
+		self.d[0] = PhotoImage(file=path.join("Assets", "back.png"))
 
 	def get_image(self, c: Card) -> PhotoImage:
-		return self.d[c.suit*100+c.value]
+		if (c.faceUp):
+			return self.d[c.suit*100+c.value]
+		return self.d[0]
 
 class CardManager:
 	# The end of the list is the top of the deck
 	# The beginning of the list is the bottom of the deck
 	def __init__(self, deck: list):
 		self.deck = deck
-        
+
 	def createDeck(self):
     # make a deck with each card in it
 		for x in range(1, 14):
@@ -62,20 +82,20 @@ class CardManager:
 	def reset(self):
 		self.deck.clear()
 		self.createDeck()
-                
+
 	def popTop(self):
-		last = self.deck.pop(-1)
-		return last
-	
-	def popTop(self):
-		first = self.deck.pop(0)
+		first = self.deck.pop(-1)
 		return first
-	
+
+	def popBottom(self):
+		last = self.deck.pop(0)
+		return last
+
 	def addTop(self, card: Card):
 		self.deck.append(card)
 
 	def addBottom(self, card: Card):
-		self.deck.insert(card)
+		self.deck.insert(0, card)
 
 	def shuffle(self):
 		random.shuffle(self.deck)
@@ -115,15 +135,20 @@ class SpiderGame():
 			self.columns.append([])
 
 
-		#For four columns, move six cards into each column
+		#For four columns, move five cards into each column
 		for col in range(4): #0,1,2,3
-			for i in range(6):
-				self.columns[col].append(self.deck.pop())
-
-		#Repeat but now 5 cards
-		for col in range(4,10): #4,5,6,7,8,9
 			for i in range(5):
 				self.columns[col].append(self.deck.pop())
+
+		#Repeat but now 4 cards
+		for col in range(4,10): #4,5,6,7,8,9
+			for i in range(4):
+				self.columns[col].append(self.deck.pop())
+
+		for col in range(10): # Placing faceup cards in all columns
+			c = self.deck.pop()
+			c.faceUp = True
+			self.columns[col].append(c)
 
 		print("Got "+str(self.getNumCardsOnField())+" cards on field, "+str(len(self.deck))+" cards remaining in draw pile")
 		#for c in self.columns[0]:
@@ -136,7 +161,7 @@ class SpiderGame():
 		deck = []
 		for x in range(1, 14):
 			for y in range(4):
-				deck.append(Card(x, TYPE.SPADE, True))
+				deck.append(Card(x, TYPE.SPADE, False))
 		assert len(deck)==52,"Size of deck is improper"
 		return deck
 
