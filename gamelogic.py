@@ -66,6 +66,9 @@ class PyTkImagePool():
 		if (c.faceUp):
 			return self.d[c.suit*100+c.value]
 		return self.d[0]
+	
+	def get_facedown_image(self):
+		return self.d[0]
 
 class CardManager:
 	# The end of the list is the top of the deck
@@ -170,6 +173,20 @@ class SpiderGame():
 		for col in self.columns:
 			total+=len(col)
 		return total
+	
+	def tryMoveCards(self, srcColumn:int, srcRow:int, destColumn:int, destRow:int) -> bool:
+		"""_summary_
+
+		Args:
+			srcColumn (int): _description_
+			srcRow (int): _description_
+			destColumn (int): _description_
+			destRow (int): _description_
+
+		Returns:
+			bool: Returns true if this move is possible and the move succeeded.
+		"""
+		return False
 
 
 # def debug_generate(card_type:TYPE):
