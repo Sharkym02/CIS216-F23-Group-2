@@ -45,6 +45,14 @@ class GameCanvas(Canvas):
 		#print(card_col, card_row)
 		print("Clicked card "+str(card))
 		self.mousePosition=Vector2(event.x,event.y)
+
+		if card.faceUp:
+			if self.selectedCard.IsPositive(): #If already has selection
+				#Interact with gamelogic here and attempt to move card(s) to another
+				#column
+				pass
+			else: #new selection
+				self.selectedCard = Vector2(card_col,card_row)
 		#print(event.x, event.y)
 		self.redraw_canvas()
 
