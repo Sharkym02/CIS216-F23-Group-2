@@ -8,5 +8,8 @@ class Vector2():
 		self.y:float = y
 		"""The y coordinate"""
 
+	def IsPositive(self):
+		return self.x >= 0 and self.y >= 0
+
 	def __str__(self) -> str:
 		return f"({self.x}, {self.y})"
