@@ -42,7 +42,7 @@ class Card:
 	def faceUp(self):
 		return self.__faceUp
 	
-	@faceUp.setter # TODO: Somehow correctly set up setter for the faceUp value.
+	@faceUp.setter
 	def faceUp(self, faceUp:bool):
 		self.__faceUp = faceUp
 
@@ -148,10 +148,8 @@ class SpiderGame():
 			for i in range(4):
 				self.columns[col].append(self.deck.pop())
 
-		for col in range(10): # Placing faceup cards in all columns
-			c = self.deck.pop()
-			c.faceUp = True
-			self.columns[col].append(c)
+		#Places faceup cards in all columns
+		self.drawFromStock()
 
 		print("Got "+str(self.getNumCardsOnField())+" cards on field, "+str(len(self.deck))+" cards remaining in draw pile")
 		#for c in self.columns[0]:
@@ -186,7 +184,60 @@ class SpiderGame():
 		Returns:
 			bool: Returns true if this move is possible and the move succeeded.
 		"""
+
+		# Checks the moving card for being the bottom-most card and if its faced up.
+		# The faced up check could probably be skipped as
+		# ideally all of the faced up card should be at the top anyways.
+		if (srcRow + 1 != len(self.columns[srcColumn]) or not self.columns[srcColumn][srcRow].faceUp):
+			return False
+
+		# Short circuits the checks if destColumn has no cards and moves the card anyways.
+		if (len(self.columns[destColumn]) <= 0):
+			self.columns[destColumn].append(self.columns[srcColumn][srcRow])
+			del self.columns[srcColumn][srcRow]
+			self.revealCard(srcColumn)
+			return True
+
+		if (destRow + 1 != len(self.columns[destColumn]) or not self.columns[destColumn][destRow].faceUp):
+			return False
+		
+		if (self.columns[srcColumn][srcRow].value == self.columns[destColumn][destRow].value - 1):
+			self.columns[destColumn].append(self.columns[srcColumn][srcRow])
+			del self.columns[srcColumn][srcRow]
+			self.revealCard(srcColumn)
+			return True
+
 		return False
+	
+	def revealCard(self, column:int) -> bool:
+		"""_summary_
+			Reveals the bottommost card of the column.
+		
+		Returns:
+			bool: Returns true if the upmost card was not revealed up and was revealed.
+		"""
+		if (self.columns[column][len(self.columns[column]) - 1].faceUp):
+			return False
+		self.columns[column][len(self.columns[column]) - 1].faceUp = True
+		return True
+	
+	def drawFromStock(self) -> bool:
+		"""_summary_
+			Draws from the stock pile and distributes the card to every column.
+		
+		Returns:
+			bool: Returns true if any cards were distributed.
+		"""
+		maxDraw = min(10, len(self.deck))
+		if (maxDraw < 1):
+			return False
+		
+		for col in range(maxDraw):
+			c = self.deck.pop()
+			c.faceUp = True
+			self.columns[col].append(c)
+
+		return True
 
 
 # def debug_generate(card_type:TYPE):

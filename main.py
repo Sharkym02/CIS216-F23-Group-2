@@ -50,6 +50,10 @@ class GameCanvas(Canvas):
 			if self.selectedCard.IsPositive(): #If already has selection
 				#Interact with gamelogic here and attempt to move card(s) to another
 				#column
+				print(spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, card_row))
+
+				self.selectedCard = Vector2(-1,-1) # Removes the previous card's
+				# selection and returns it to "default"
 				pass
 			else: #new selection
 				self.selectedCard = Vector2(card_col,card_row)
@@ -121,4 +125,5 @@ if __name__ == "__main__":
 	canvas.pack(expand=True, fill="both")
 	
 	root.geometry("640x480")
+	root.resizable(False, False)
 	root.mainloop()
