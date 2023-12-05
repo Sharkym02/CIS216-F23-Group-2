@@ -46,6 +46,10 @@ class GameCanvas(Canvas):
 		print("Clicked card "+str(card))
 		self.mousePosition=Vector2(event.x,event.y)
 
+		# Ignores cards that are above other cards.
+		if (len(self.spider.columns[card_col]) - 1 > card_row):
+			return
+
 		if card.faceUp:
 			if self.selectedCard.IsPositive(): #If already has selection
 				#Interact with gamelogic here and attempt to move card(s) to another
@@ -58,6 +62,10 @@ class GameCanvas(Canvas):
 			else: #new selection
 				self.selectedCard = Vector2(card_col,card_row)
 		#print(event.x, event.y)
+		self.redraw_canvas()
+	
+	def handle_stock_click(self, event):
+		self.spider.drawFromStock()
 		self.redraw_canvas()
 
 	def handle_mouseover(self,event):
@@ -93,9 +101,11 @@ class GameCanvas(Canvas):
             text="Click to draw more cards")
 		for drawNum in range(len(self.spider.deck)//10):
 			image = self.pool.get_facedown_image()
-			self.create_image(SCREEN_WIDTH-50-10*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
+			img_obj = self.create_image(SCREEN_WIDTH-50-10*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
+			self.tag_bind(img_obj, "<1>", self.handle_stock_click)
 
-		self.create_rectangle(10, 10, 64, 64, outline="orange", fill="", width=2)
+		if (self.selectedCard.IsPositive()): # TODO: Make the highlight around the card.
+			self.create_rectangle(10, 10, 64, 64, outline="orange", fill="", width=2)
 
 class MenuBar(Menu):
 	def __init__(self, root, *args, **kwargs):
