@@ -124,6 +124,6 @@ if __name__ == "__main__":
 	menuBar = MenuBar(root)
 	canvas.pack(expand=True, fill="both")
 	
-	root.geometry("640x480")
+	root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
 	root.resizable(False, False)
 	root.mainloop()
