@@ -216,8 +216,12 @@ class SpiderGame():
 		Returns:
 			bool: Returns true if the upmost card was not revealed up and was revealed.
 		"""
+		if (len(self.columns[column]) <= 0):
+			return False
+
 		if (self.columns[column][len(self.columns[column]) - 1].faceUp):
 			return False
+		
 		self.columns[column][len(self.columns[column]) - 1].faceUp = True
 		return True
 	
