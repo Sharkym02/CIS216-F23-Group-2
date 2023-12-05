@@ -242,6 +242,20 @@ class SpiderGame():
 			self.columns[col].append(c)
 
 		return True
+	
+	# Checks if a column is descending, so you can select
+	# a whole column of cards.
+	def numValidDescending(self,col,row):
+		colToCheck:List[Card] = self.columns[col]
+		maxVal = colToCheck[row].value+1
+
+		for i in range(row,len(colToCheck)):
+			print(f"{colToCheck[i].value} < {maxVal}?")
+			if colToCheck[i].value < maxVal:
+				maxVal = colToCheck[i].value
+			else:
+				return 0
+		return len(colToCheck)-row
 
 
 # def debug_generate(card_type:TYPE):
