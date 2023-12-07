@@ -1,11 +1,11 @@
 # Class to handle x/y coords
 
 class Vector2():
-	def __init__(self,x:float=0.0,y:float=0.0) -> None:
-		self.x:float = x
+	def __init__(self,x:int=0,y:int=0) -> None:
+		self.x:int = x
 		"""The x coordinate"""
 
-		self.y:float = y
+		self.y:int = y
 		"""The y coordinate"""
 
 	def IsPositive(self):

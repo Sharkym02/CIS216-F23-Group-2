@@ -116,6 +116,8 @@ class SpiderGame():
 		"""The deck of cards. In spider solitiare, there are two decks totalling 104."""
 		self.columns:List[List[Card]] = []
 		"""All the columns of the play area. There are 10 in total."""
+		self.completedColumns:int = 0
+		"""When there are eight completed columns, there are no cards left on the board and the game is won."""
 
 		#Spider uses two decks, so combine two decks
 		self.deck+=SpiderGame.createDeck()
@@ -188,23 +190,38 @@ class SpiderGame():
 		# Checks the moving card for being the bottom-most card and if its faced up.
 		# The faced up check could probably be skipped as
 		# ideally all of the faced up card should be at the top anyways.
-		if (srcRow + 1 != len(self.columns[srcColumn]) or not self.columns[srcColumn][srcRow].faceUp):
-			return False
+		#if (srcRow + 1 != len(self.columns[srcColumn]) or not self.columns[srcColumn][srcRow].faceUp):
+		#	return False
+
+
 
 		# Short circuits the checks if destColumn has no cards and moves the card anyways.
 		if (len(self.columns[destColumn]) <= 0):
-			self.columns[destColumn].append(self.columns[srcColumn][srcRow])
-			del self.columns[srcColumn][srcRow]
+			numToMove = self.numValidDescending(srcColumn,srcRow)
+			# This is kind of tricky, we have to move the cards to the destination first
+			# and THEN clear them from the source row. deleting an element from the array
+			# will shift it down, so we should be able to just do it on the same row
+
+			for i in range(numToMove):
+				self.columns[destColumn].append(self.columns[srcColumn][srcRow])
+				del self.columns[srcColumn][srcRow]
 			self.revealCard(srcColumn)
 			return True
 
+		# Checks if dest column is face up... I can't tell what the first one is doing
 		if (destRow + 1 != len(self.columns[destColumn]) or not self.columns[destColumn][destRow].faceUp):
 			return False
 		
+		#if src is 1 less than dest, this is a valid move
 		if (self.columns[srcColumn][srcRow].value == self.columns[destColumn][destRow].value - 1):
-			self.columns[destColumn].append(self.columns[srcColumn][srcRow])
-			del self.columns[srcColumn][srcRow]
+			
+			#Refer to above comment -BM
+			numToMove = self.numValidDescending(srcColumn,srcRow)
+			for i in range(numToMove):
+				self.columns[destColumn].append(self.columns[srcColumn][srcRow])
+				del self.columns[srcColumn][srcRow]
 			self.revealCard(srcColumn)
+			self.checkAndMoveCompletedColumn(destColumn)
 			return True
 
 		return False
@@ -245,17 +262,55 @@ class SpiderGame():
 	
 	# Checks if a column is descending, so you can select
 	# a whole column of cards.
-	def numValidDescending(self,col,row):
+	def numValidDescending(self,col:int,row:int) -> int:
+		"""Returns the number of valid descending cards.
+
+		Args:
+			col (int): column to check
+			row (int): row to check
+
+		Returns:
+			int: Returns 1 if this is the bottom most card,
+			or more if there are more descending cards below it.
+			If a column is clicked such as [8, 7, 9], will return 0
+			as this is not a valid descending column. Therefore
+			a valid column will ALWAYS be >0.
+		"""
 		colToCheck:List[Card] = self.columns[col]
 		maxVal = colToCheck[row].value+1
 
 		for i in range(row,len(colToCheck)):
-			print(f"{colToCheck[i].value} < {maxVal}?")
+			#print(f"{colToCheck[i].value} < {maxVal}?")
 			if colToCheck[i].value < maxVal:
 				maxVal = colToCheck[i].value
 			else:
 				return 0
 		return len(colToCheck)-row
+	
+	def checkAndMoveCompletedColumn(self, col:int) -> bool:
+
+		columnToCheck = self.columns[col]
+		start = len(columnToCheck)-1
+		stop = start-13
+		val = 1
+		print("Checking completions: ",end='')
+		for row in range(start, stop, -1):
+			if columnToCheck[row].value == val and columnToCheck[row].faceUp:
+				val+=1
+				print(str(columnToCheck[row].value)+", ",end="")
+			else:
+				print("")
+				return False
+		print("Completed!")
+		# if we got this far, it was completed!
+		for row in range(start, stop, -1):
+			columnToCheck.pop()
+		self.completedColumns += 1
+		return True
+	
+	def isGameWon(self):
+		return self.completedColumns == 8
+
 
 
 # def debug_generate(card_type:TYPE):
