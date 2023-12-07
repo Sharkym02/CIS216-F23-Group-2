@@ -110,6 +110,10 @@ class Column(CardManager):
 
 #Spider Solitiare
 class SpiderGame():
+
+	#Change this to 11 for debugging or some sort of easy mode with a free column
+	NUM_COLUMNS = 10
+
 	def __init__(self):
 
 		self.deck:List[Card] = []
@@ -136,7 +140,7 @@ class SpiderGame():
 		# (I will leave that to someone else to improve upon)
 
 		#DON'T DO [[]]*10 IT WILL JUST COPY THE FIRST ARRAY REFERENCE TO THE OTHERS
-		for i in range(10):
+		for i in range(SpiderGame.NUM_COLUMNS):
 			self.columns.append([])
 
 
@@ -197,7 +201,9 @@ class SpiderGame():
 
 		# Short circuits the checks if destColumn has no cards and moves the card anyways.
 		if (len(self.columns[destColumn]) <= 0):
+			print("Trying to move to an empty column.")
 			numToMove = self.numValidDescending(srcColumn,srcRow)
+			print(f"Got {numToMove} cards to move.")
 			# This is kind of tricky, we have to move the cards to the destination first
 			# and THEN clear them from the source row. deleting an element from the array
 			# will shift it down, so we should be able to just do it on the same row
@@ -302,6 +308,7 @@ class SpiderGame():
 				print("")
 				return False
 		print("Completed!")
+		print("Removing cards from column "+str(col))
 		# if we got this far, it was completed!
 		for row in range(start, stop, -1):
 			columnToCheck.pop()

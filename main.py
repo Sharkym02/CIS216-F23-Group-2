@@ -66,6 +66,12 @@ class GameCanvas(Canvas):
 				print("Got a descending column of "+str(numValidDescending)+" cards")
 		#print(event.x, event.y)
 		self.redraw_canvas()
+
+	def handle_column_click(self, event, card_col:int):
+		if self.selectedCard.IsPositive():
+			print("clicked a column with a selection...")
+			if self.spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, 0):
+				self.redraw_canvas()
 	
 	def handle_stock_click(self, event):
 		self.spider.drawFromStock()
@@ -85,12 +91,12 @@ class GameCanvas(Canvas):
 			text=str(self.mousePosition))
 
 		
-		for colNum in range(10):
+		for colNum in range(self.spider.NUM_COLUMNS):
 			col = self.spider.columns[colNum]
 			
 			#TODO: This is a clickable column so you can drag cards into it
 			invisible_column = self.create_rectangle(30+colNum*50, 20, 30+colNum*50+CARD_SIZE.x, 200, outline="red", fill="red", width=2)
-			#self.tag_bind(invisible_column, "<1>", self.handle_stock_click)
+			self.tag_bind(invisible_column, "<1>", lambda e, x=colNum: self.handle_column_click(e,x))
 
 			for i in range(len(col)):
 				#card = col[i]
@@ -120,7 +126,7 @@ class GameCanvas(Canvas):
 
 		for drawNum in range(self.spider.completedColumns):
 			image = self.pool.get_image(Card(1,0,True))
-			img_obj = self.create_image(10+(CARD_SIZE.x+4)*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
+			img_obj = self.create_image(20+(CARD_SIZE.x+4)*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
 
 		if (self.selectedCard.IsPositive()): # TODO: Make the highlight around the card.
 			#For some insane reason create_rectangle is x1,y1, x2,y2 instead of x,y,w,h
