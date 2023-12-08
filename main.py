@@ -54,7 +54,7 @@ class GameCanvas(Canvas):
 			if self.selectedCard.IsPositive(): #If already has selection
 				#Interact with gamelogic here and attempt to move card(s) to another
 				#column
-				print(spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, card_row))
+				spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, card_row)
 
 				self.selectedCard = Vector2(-1,-1) # Removes the previous card's
 				# selection and returns it to "default"
@@ -71,6 +71,7 @@ class GameCanvas(Canvas):
 		if self.selectedCard.IsPositive():
 			print("clicked a column with a selection...")
 			if self.spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, 0):
+				self.selectedCard = Vector2(-1,-1)
 				self.redraw_canvas()
 	
 	def handle_stock_click(self, event):
@@ -119,6 +120,11 @@ class GameCanvas(Canvas):
             text="Click to draw more cards")
 		self.create_text(10, SCREEN_HEIGHT-70-40, anchor=W, font="Ubuntu",
             text="Completed cards go here")
+		
+		if spider.debug_mode:
+			self.create_text(10, SCREEN_HEIGHT-200, anchor=W, font="Ubuntu",
+            text="DEBUG MODE")
+
 		for drawNum in range(len(self.spider.deck)//10): #No, this isn't a typo, it's the floor division operator.
 			image = self.pool.get_facedown_image()
 			img_obj = self.create_image(SCREEN_WIDTH-50-10*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
@@ -137,8 +143,9 @@ class GameCanvas(Canvas):
 			self.create_rectangle(src.x, src.y, src.x+CARD_SIZE.x, rect_height, outline="orange", fill="", width=2)
 
 class MenuBar(Menu):
-	def __init__(self, root, *args, **kwargs):
+	def __init__(self, root, spider, *args, **kwargs):
 		Menu.__init__(self, root, *args, **kwargs)
+		self.spider = spider
 		# self._root = root
 		gameMenu = Menu(self, tearoff=0)
 
@@ -147,8 +154,20 @@ class MenuBar(Menu):
 
 		self.add_cascade(label="Game", menu = gameMenu)
 
+		debugOptions = Menu(self,tearoff=0)
+		#If not assigned to self it will get garbage collected even though add_checkbutton should store the ref... oh well -BM
+		self.tkVar = BooleanVar(name="DebugMode")
+		self.tkVar.trace_add("write",callback=self.set_debug_mode )
+		debugOptions.add_checkbutton(label="Allow dragging and dropping onto any card", variable=self.tkVar, onvalue=True, offvalue=False)
+
+		self.add_cascade(label="Difficulty Options", menu=debugOptions)
+
 		root.config(menu=self)
 		return
+	
+	def set_debug_mode(self,var_name,idx,access_mode):
+		print(self.tkVar.get())
+		self.spider.debug_mode = self.tkVar.get()
 
 
 if __name__ == "__main__":
@@ -160,7 +179,7 @@ if __name__ == "__main__":
 	#frame = ttk.Frame(root,padding=10)
 
 	canvas = GameCanvas(root, spider, pool)
-	menuBar = MenuBar(root)
+	menuBar = MenuBar(root,spider)
 	canvas.pack(expand=True, fill="both")
 	
 	root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")

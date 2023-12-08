@@ -112,9 +112,11 @@ class Column(CardManager):
 class SpiderGame():
 
 	#Change this to 11 for debugging or some sort of easy mode with a free column
-	NUM_COLUMNS = 10
+	NUM_COLUMNS = 11
 
 	def __init__(self):
+
+		self.debug_mode:bool = False
 
 		self.deck:List[Card] = []
 		"""The deck of cards. In spider solitiare, there are two decks totalling 104."""
@@ -219,7 +221,7 @@ class SpiderGame():
 			return False
 		
 		#if src is 1 less than dest, this is a valid move
-		if (self.columns[srcColumn][srcRow].value == self.columns[destColumn][destRow].value - 1):
+		if (self.columns[srcColumn][srcRow].value == self.columns[destColumn][destRow].value - 1 or self.debug_mode):
 			
 			#Refer to above comment -BM
 			numToMove = self.numValidDescending(srcColumn,srcRow)
@@ -227,7 +229,8 @@ class SpiderGame():
 				self.columns[destColumn].append(self.columns[srcColumn][srcRow])
 				del self.columns[srcColumn][srcRow]
 			self.revealCard(srcColumn)
-			self.checkAndMoveCompletedColumn(destColumn)
+			if self.checkAndMoveCompletedColumn(destColumn):
+				self.revealCard(destColumn)
 			return True
 
 		return False
@@ -282,12 +285,16 @@ class SpiderGame():
 			as this is not a valid descending column. Therefore
 			a valid column will ALWAYS be >0.
 		"""
+
 		colToCheck:List[Card] = self.columns[col]
+		if row >= len(colToCheck):
+			print("Error: Tried checking row "+str(row)+" in column "+str(col)+" but there are only "+str(len(colToCheck))+" cards in the column.")
+			return 0
 		maxVal = colToCheck[row].value+1
 
 		for i in range(row,len(colToCheck)):
 			#print(f"{colToCheck[i].value} < {maxVal}?")
-			if colToCheck[i].value < maxVal:
+			if colToCheck[i].value == maxVal-1:
 				maxVal = colToCheck[i].value
 			else:
 				return 0
