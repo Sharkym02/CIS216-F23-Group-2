@@ -125,7 +125,7 @@ class SpiderGame():
 		"""All the columns of the play area. There are 10 in total."""
 		self.completedColumns:int = 0
 		"""When there are eight completed columns, there are no cards left on the board and the game is won."""
-		self.moves:int = 0
+		self.moves:int = -1 # drawFromStock() function counts as a move
 		"""Amount of moves taken"""
 
 		self.startNewGame()
@@ -178,7 +178,7 @@ class SpiderGame():
 		for col in range(len(self.columns)):
 			self.columns[col] = []
 		self.completedColumns = 0
-		self.moves = 0
+		self.moves = -1 # drawFromStock() counts as a move
 
 	@staticmethod
 	def createDeck() -> List[Card]:
@@ -283,7 +283,9 @@ class SpiderGame():
 			c = self.deck.pop()
 			c.faceUp = True
 			self.columns[col].append(c)
+			self.checkAndMoveCompletedColumn(col)
 
+		self.moves += 1
 		return True
 	
 	# Checks if a column is descending, so you can select

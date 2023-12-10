@@ -122,7 +122,7 @@ class GameCanvas(Canvas):
             text="Click to draw more cards")
 		self.create_text(10, SCREEN_HEIGHT-70-40, anchor=W, font="Ubuntu",
             text="Completed cards go here")
-		self.create_text(30, 20, anchor=W, font="Ubuntu",
+		self.create_text(30, 15, anchor=W, font="Ubuntu",
 			text=f"Moves taken: {spider.moves}")
 		
 		# if spider.debug_mode:
@@ -208,9 +208,9 @@ class WinDialog(Toplevel):
 	def __init__(self, spider:SpiderGame, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self._frame = Frame(self)
-		self._label = Label(self._frame, text=f"You cleared all of the cards!\nTotal moves taken: {spider.moves}")
-		self._frame.pack()
-		self._label.pack()
+		self._label = Label(self._frame, wraplength=250, text=f"You cleared all of the cards!\nTotal moves taken: {spider.moves}")
+		self._frame.pack(fill='both')
+		self._label.pack(fill='x')
 		self.title("You won!")
 		self.geometry("250x150")
 		self.resizable(False, False)
@@ -222,13 +222,16 @@ class HelpDialog(Toplevel):
 		super().__init__(*args, **kwargs)
 		self._frame = Frame(self)
 		
-		self._label = Label(self._frame, text="- move cards around to create stacks in descending order.")
-		self._label2 = Label(self._frame,text="- you can only move a stack to another column if the it contains descending cards")
-		self._label3 = Label(self._frame,text="- once you have a stack of cards descending from K to A, it is completed")
-		self._label4 = Label(self._frame,text="- the game is completed when no cards are left on the field")
+		self._label1 = Label(self._frame, justify='left', wraplength=250, text="- move cards around to create stacks in descending order.")
+		self._label2 = Label(self._frame, justify='left', wraplength=250,text="- you can only move a stack to another column if the it contains descending cards")
+		self._label3 = Label(self._frame, justify='left', wraplength=250,text="- once you have a stack of cards descending from K to A, it is completed")
+		self._label4 = Label(self._frame, justify='left', wraplength=250,text="- the game is completed when no cards are left on the field")
 		
-		self._frame.pack()
-		self._label.pack()
+		self._frame.pack(fill='both')
+		self._label1.pack(fill='x')
+		self._label2.pack(fill='x')
+		self._label3.pack(fill='x')
+		self._label4.pack(fill='x')
 		self.title("How to play Spider Solitaire")
 		self.geometry("250x300")
 		self.resizable(False, False)
