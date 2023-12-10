@@ -148,9 +148,7 @@ class SpiderGame():
 		# shuffled, then column begin/end is marked somewhere
 		# (I will leave that to someone else to improve upon)
 
-		#DON'T DO [[]]*10 IT WILL JUST COPY THE FIRST ARRAY REFERENCE TO THE OTHERS
-		for i in range(10):
-			self.columns.append([])
+
 
 
 		#For four columns, move five cards into each column
@@ -172,6 +170,11 @@ class SpiderGame():
 
 	def eraseGame(self):
 		self.deck = []
+
+		#DON'T DO [[]]*10 IT WILL JUST COPY THE FIRST ARRAY REFERENCE TO THE OTHERS
+		while len(self.columns) < 10:
+			self.columns.append([])
+
 		for col in range(len(self.columns)):
 			self.columns[col] = []
 		self.completedColumns = 0
