@@ -6,7 +6,7 @@ from tkinter import ttk, TclError, filedialog, font
 from gamelogic import Card, SpiderGame, PyTkImagePool
 from vector2 import Vector2
 from functools import partial 
-#from PIL import Image, ImageTk
+import os.path
 
 #TODO: We should make this adjustable in real time -BM
 SCREEN_WIDTH = 640
@@ -161,6 +161,8 @@ class MenuBar(Menu):
 		self.tkVar = BooleanVar(name="DebugMode")
 		self.tkVar.trace_add("write",callback=self.set_debug_mode )
 		debugOptions.add_checkbutton(label="Allow dragging and dropping onto any card", variable=self.tkVar, onvalue=True, offvalue=False)
+		#print("Debug: ",self.get_debug_mode())
+		self.tkVar.set(self.get_debug_mode())
 
 
 		#debugOptions.add_checkbutton(label="Free space column", variable=self.tkVar, onvalue=True, offvalue=False)
@@ -175,6 +177,18 @@ class MenuBar(Menu):
 	def set_debug_mode(self,var_name,idx,access_mode):
 		print(self.tkVar.get())
 		self.spider.debug_mode = self.tkVar.get()
+
+		with open("setting.ini",'w',encoding='utf-8') as f:
+			f.write(self.tkVar.get() and "1" or "0")
+
+	def get_debug_mode(self) -> bool:
+		if os.path.exists("setting.ini"):
+			with open("setting.ini",'r',encoding='utf-8') as f:
+				setting = f.read().strip()
+				#print("'"+setting+"'")
+				return setting=="1"
+		return False
+
 
 
 if __name__ == "__main__":
