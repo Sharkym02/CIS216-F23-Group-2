@@ -221,7 +221,12 @@ class HelpDialog(Toplevel):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self._frame = Frame(self)
-		self._label = Label(self._frame, text="no idea.")
+		
+		self._label = Label(self._frame, text="- move cards around to create stacks in descending order.")
+		self._label2 = Label(self._frame,text="- you can only move a stack to another column if the it contains descending cards")
+		self._label3 = Label(self._frame,text="- once you have a stack of cards descending from K to A, it is completed")
+		self._label4 = Label(self._frame,text="- the game is completed when no cards are left on the field")
+		
 		self._frame.pack()
 		self._label.pack()
 		self.title("How to play Spider Solitaire")
