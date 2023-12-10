@@ -8,7 +8,6 @@ from vector2 import Vector2
 from functools import partial 
 import os.path
 
-#TODO: We should make this adjustable in real time -BM
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 #This should be a set/get if it's going to change -BM
@@ -139,7 +138,7 @@ class GameCanvas(Canvas):
 			image = self.pool.get_image(Card(1,0,True))
 			img_obj = self.create_image(25+(CARD_SIZE.x+4)*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
 
-		if (self.selectedCard.IsPositive()): # TODO: Make the highlight around the card.
+		if (self.selectedCard.IsPositive()):
 			#For some insane reason create_rectangle is x1,y1, x2,y2 instead of x,y,w,h
 			src = Vector2(self.selectedCard.x*50+29, self.selectedCard.y*16+30)
 			
@@ -182,8 +181,8 @@ class MenuBar(Menu):
 		return
 	
 	def startNewGame(self, canvas:GameCanvas, spider:SpiderGame):
-		print(self)
-		spider.startNewGame(spider)
+		#print(self)
+		spider.startNewGame()
 		canvas.selectedCard = Vector2(-1,-1)
 		canvas.redraw_canvas()
 

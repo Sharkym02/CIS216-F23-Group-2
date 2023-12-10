@@ -172,7 +172,7 @@ class SpiderGame():
 		self.deck = []
 
 		#DON'T DO [[]]*10 IT WILL JUST COPY THE FIRST ARRAY REFERENCE TO THE OTHERS
-		while len(self.columns) < 10:
+		while len(self.columns) < SpiderGame.NUM_COLUMNS:
 			self.columns.append([])
 
 		for col in range(len(self.columns)):
@@ -188,7 +188,7 @@ class SpiderGame():
 		for x in range(1, 14):
 			for y in range(4):
 				deck.append(Card(x, TYPE.SPADE, False))
-		assert len(deck)==52,"Size of deck is improper"
+		#assert len(deck)==52,"Size of deck is improper"
 		return deck
 
 	def getNumCardsOnField(self) -> int:
@@ -215,8 +215,6 @@ class SpiderGame():
 		# ideally all of the faced up card should be at the top anyways.
 		#if (srcRow + 1 != len(self.columns[srcColumn]) or not self.columns[srcColumn][srcRow].faceUp):
 		#	return False
-
-
 
 		# Short circuits the checks if destColumn has no cards and moves the card anyways.
 		if (len(self.columns[destColumn]) <= 0):
@@ -343,6 +341,24 @@ class SpiderGame():
 	
 	def isGameWon(self):
 		return self.completedColumns == 8
+	
+	def debug_print_game(self)->str:
+		biggestRow = 0
+		for col in range(SpiderGame.NUM_COLUMNS):
+			biggestRow = max(biggestRow,len(self.columns[col]))
+		
+		#for col in range(SpiderGame.NUM_COLUMNS):
+		#	for row in 
+		output = ""
+		for row in range(biggestRow):
+			for col in range(SpiderGame.NUM_COLUMNS):
+				thisColumn = self.columns[col]
+				if row >= len(thisColumn):
+					output+="   "
+				else:
+					output+=thisColumn[row].faceUp and str(thisColumn[row].value).zfill(2)+" " or "xx "
+			output+="\n"
+		return output
 
 
 
