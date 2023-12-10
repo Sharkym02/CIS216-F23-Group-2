@@ -126,6 +126,10 @@ class SpiderGame():
 		self.completedColumns:int = 0
 		"""When there are eight completed columns, there are no cards left on the board and the game is won."""
 
+		self.startNewGame()
+
+	def startNewGame(self, difficulty="easy"):
+		self.eraseGame()
 		#Spider uses two decks, so combine two decks
 		self.deck+=SpiderGame.createDeck()
 		self.deck+=SpiderGame.createDeck()
@@ -143,7 +147,7 @@ class SpiderGame():
 		# (I will leave that to someone else to improve upon)
 
 		#DON'T DO [[]]*10 IT WILL JUST COPY THE FIRST ARRAY REFERENCE TO THE OTHERS
-		for i in range(SpiderGame.NUM_COLUMNS):
+		for i in range(10):
 			self.columns.append([])
 
 
@@ -156,13 +160,19 @@ class SpiderGame():
 		for col in range(4,10): #4,5,6,7,8,9
 			for i in range(4):
 				self.columns[col].append(self.deck.pop())
-
+		
 		#Places faceup cards in all columns
 		self.drawFromStock()
 
 		print("Got "+str(self.getNumCardsOnField())+" cards on field, "+str(len(self.deck))+" cards remaining in draw pile")
 		#for c in self.columns[0]:
 		#	print(c)
+
+	def eraseGame(self):
+		self.deck = []
+		for col in range(len(self.columns)):
+			self.columns[col] = []
+		self.completedColumns = 0
 
 	@staticmethod
 	def createDeck() -> List[Card]:

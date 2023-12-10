@@ -145,13 +145,13 @@ class GameCanvas(Canvas):
 			self.create_rectangle(src.x, src.y, src.x+CARD_SIZE.x, rect_height, outline="orange", fill="", width=2)
 
 class MenuBar(Menu):
-	def __init__(self, root, spider, *args, **kwargs):
+	def __init__(self, root, canvas:GameCanvas, spider:SpiderGame, *args, **kwargs):
 		Menu.__init__(self, root, *args, **kwargs)
 		self.spider = spider
 		# self._root = root
 		gameMenu = Menu(self, tearoff=0)
 
-		gameMenu.add_command(label="New Game")
+		gameMenu.add_command(label="New Game", command=lambda: self.startNewGame(canvas, spider))
 		# Additional buttons could be: Undo, Redo (?), Scores
 
 		self.add_cascade(label="Game", menu = gameMenu)
@@ -174,6 +174,12 @@ class MenuBar(Menu):
 		root.config(menu=self)
 		return
 	
+	def startNewGame(self, canvas:GameCanvas, spider:SpiderGame):
+		print(self)
+		spider.startNewGame(spider)
+		canvas.selectedCard = Vector2(-1,-1)
+		canvas.redraw_canvas()
+
 	def set_debug_mode(self,var_name,idx,access_mode):
 		print(self.tkVar.get())
 		self.spider.debug_mode = self.tkVar.get()
@@ -199,7 +205,7 @@ if __name__ == "__main__":
 	#frame = ttk.Frame(root,padding=10)
 
 	canvas = GameCanvas(root, spider)
-	menuBar = MenuBar(root,spider)
+	menuBar = MenuBar(root, canvas, spider)
 	canvas.pack(expand=True, fill="both")
 	
 	root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
