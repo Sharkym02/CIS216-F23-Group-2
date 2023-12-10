@@ -34,3 +34,13 @@ When making commits...
 11/19 - basic gui
 
 11/25 - More adjustment to card code, improve canvas code
+
+11/29 - now clicking cards works
+
+12/5 - Now moving cards works, and checking completed columns
+
+12/8 - able to complete game, click empty columns
+
+12/9 - save/load settings, cleanup
+
+12/10 - unit test, how to play, reset game, cleanup
