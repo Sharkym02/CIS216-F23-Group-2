@@ -26,6 +26,7 @@ class Card:
 		of 2, is of the heart suit, and is currently facing up.
 		"""
 		s = f"({self.__value}, {TYPE(self.__suit).name}, "
+		#Very epic ternary operator -BM
 		s+= self.__faceUp and "up" or "down"
 		s+=")"
 		return s
@@ -112,7 +113,7 @@ class Column(CardManager):
 class SpiderGame():
 
 	#Change this to 11 for debugging or some sort of easy mode with a free column
-	NUM_COLUMNS = 11
+	NUM_COLUMNS = 10
 
 	def __init__(self):
 
@@ -306,7 +307,7 @@ class SpiderGame():
 		start = len(columnToCheck)-1
 		stop = start-13
 		val = 1
-		print("Checking completions: ",end='')
+		print(f"Checking if column {col} is completed: ",end='')
 		for row in range(start, stop, -1):
 			if columnToCheck[row].value == val and columnToCheck[row].faceUp:
 				val+=1

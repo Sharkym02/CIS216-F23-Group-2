@@ -18,10 +18,10 @@ SCREEN_CENTER_Y = SCREEN_HEIGHT/2
 CARD_SIZE = Vector2(42,60)
 
 class GameCanvas(Canvas):
-	def __init__(self, root, spider:SpiderGame, pool:PyTkImagePool, *args, **kwargs):
+	def __init__(self, root, spider:SpiderGame, *args, **kwargs):
 
 		self.spider = spider
-		self.pool = pool
+		self.pool = PyTkImagePool()
 		self.mousePosition = Vector2()
 		self.selectedCard = Vector2(-1, -1)
 
@@ -73,6 +73,10 @@ class GameCanvas(Canvas):
 			if self.spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, 0):
 				self.selectedCard = Vector2(-1,-1)
 				self.redraw_canvas()
+
+				if self.spider.isGameWon():
+					#TODO: pop-up here
+					pass
 	
 	def handle_stock_click(self, event):
 		self.spider.drawFromStock()
@@ -86,17 +90,15 @@ class GameCanvas(Canvas):
 		self.delete("all") #Clear canvas
 		self.configure(bg="green")
 
-		self.create_text(20, 30, anchor=W, font="Ubuntu",
-            text="This is canvas drawing")
-		self.create_text(20,SCREEN_HEIGHT-20, anchor=W, font="Ubuntu",
-			text=str(self.mousePosition))
+		# self.create_text(20,SCREEN_HEIGHT-20, anchor=W, font="Ubuntu",
+		# 	text=str(self.mousePosition))
 
 		
 		for colNum in range(self.spider.NUM_COLUMNS):
 			col = self.spider.columns[colNum]
 			
-			#TODO: This is a clickable column so you can drag cards into it
-			invisible_column = self.create_rectangle(30+colNum*50, 20, 30+colNum*50+CARD_SIZE.x, 200, outline="red", fill="red", width=2)
+			#This is a clickable column so you can drag cards into it. YES THERE NEEDS TO BE FILL YOU CAN'T LEAVE IT TRANSPARENT
+			invisible_column = self.create_rectangle(30+colNum*50, 20, 30+colNum*50+CARD_SIZE.x, 200, outline="green", fill="green", width=2)
 			self.tag_bind(invisible_column, "<1>", lambda e, x=colNum: self.handle_column_click(e,x))
 
 			for i in range(len(col)):
@@ -121,9 +123,9 @@ class GameCanvas(Canvas):
 		self.create_text(10, SCREEN_HEIGHT-70-40, anchor=W, font="Ubuntu",
             text="Completed cards go here")
 		
-		if spider.debug_mode:
-			self.create_text(10, SCREEN_HEIGHT-200, anchor=W, font="Ubuntu",
-            text="DEBUG MODE")
+		# if spider.debug_mode:
+		# 	self.create_text(10, SCREEN_HEIGHT-200, anchor=W, font="Ubuntu",
+        #     text="DEBUG MODE")
 
 		for drawNum in range(len(self.spider.deck)//10): #No, this isn't a typo, it's the floor division operator.
 			image = self.pool.get_facedown_image()
@@ -132,7 +134,7 @@ class GameCanvas(Canvas):
 
 		for drawNum in range(self.spider.completedColumns):
 			image = self.pool.get_image(Card(1,0,True))
-			img_obj = self.create_image(20+(CARD_SIZE.x+4)*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
+			img_obj = self.create_image(25+(CARD_SIZE.x+4)*drawNum,SCREEN_HEIGHT-70,image=image,anchor=CENTER)
 
 		if (self.selectedCard.IsPositive()): # TODO: Make the highlight around the card.
 			#For some insane reason create_rectangle is x1,y1, x2,y2 instead of x,y,w,h
@@ -160,7 +162,12 @@ class MenuBar(Menu):
 		self.tkVar.trace_add("write",callback=self.set_debug_mode )
 		debugOptions.add_checkbutton(label="Allow dragging and dropping onto any card", variable=self.tkVar, onvalue=True, offvalue=False)
 
+
+		#debugOptions.add_checkbutton(label="Free space column", variable=self.tkVar, onvalue=True, offvalue=False)
+
 		self.add_cascade(label="Difficulty Options", menu=debugOptions)
+
+		self.add_cascade(label="How To Play")
 
 		root.config(menu=self)
 		return
@@ -174,11 +181,10 @@ if __name__ == "__main__":
 
 
 	root = Tk()
-	pool = PyTkImagePool()
 	spider = SpiderGame()
 	#frame = ttk.Frame(root,padding=10)
 
-	canvas = GameCanvas(root, spider, pool)
+	canvas = GameCanvas(root, spider)
 	menuBar = MenuBar(root,spider)
 	canvas.pack(expand=True, fill="both")
 	
