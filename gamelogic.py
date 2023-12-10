@@ -125,6 +125,8 @@ class SpiderGame():
 		"""All the columns of the play area. There are 10 in total."""
 		self.completedColumns:int = 0
 		"""When there are eight completed columns, there are no cards left on the board and the game is won."""
+		self.moves:int = 0
+		"""Amount of moves taken"""
 
 		self.startNewGame()
 
@@ -173,6 +175,7 @@ class SpiderGame():
 		for col in range(len(self.columns)):
 			self.columns[col] = []
 		self.completedColumns = 0
+		self.moves = 0
 
 	@staticmethod
 	def createDeck() -> List[Card]:
@@ -225,6 +228,7 @@ class SpiderGame():
 				self.columns[destColumn].append(self.columns[srcColumn][srcRow])
 				del self.columns[srcColumn][srcRow]
 			self.revealCard(srcColumn)
+			self.moves += 1
 			return True
 
 		# Checks if dest column is face up... I can't tell what the first one is doing
@@ -242,6 +246,7 @@ class SpiderGame():
 			self.revealCard(srcColumn)
 			if self.checkAndMoveCompletedColumn(destColumn):
 				self.revealCard(destColumn)
+			self.moves += 1
 			return True
 
 		return False

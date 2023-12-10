@@ -17,6 +17,7 @@ SCREEN_CENTER_Y = SCREEN_HEIGHT/2
 
 CARD_SIZE = Vector2(42,60)
 
+
 class GameCanvas(Canvas):
 	def __init__(self, root, spider:SpiderGame, *args, **kwargs):
 
@@ -33,7 +34,6 @@ class GameCanvas(Canvas):
 		#self.bind("<Motion>", lambda x: self.handle_mouseover(x))
 		# self._root = root
 		self.redraw_canvas()
-
 		
 		return
 	
@@ -48,7 +48,6 @@ class GameCanvas(Canvas):
 		print("Clicked card "+str(card))
 		self.mousePosition=Vector2(event.x,event.y)
 
-		
 
 		if card.faceUp:
 			if self.selectedCard.IsPositive(): #If already has selection
@@ -66,6 +65,9 @@ class GameCanvas(Canvas):
 				print("Got a descending column of "+str(numValidDescending)+" cards")
 		#print(event.x, event.y)
 		self.redraw_canvas()
+		if self.spider.isGameWon():
+			winDialog = WinDialog(spider)
+			pass
 
 	def handle_column_click(self, event, card_col:int):
 		if self.selectedCard.IsPositive():
@@ -73,9 +75,8 @@ class GameCanvas(Canvas):
 			if self.spider.tryMoveCards(self.selectedCard.x, self.selectedCard.y, card_col, 0):
 				self.selectedCard = Vector2(-1,-1)
 				self.redraw_canvas()
-
 				if self.spider.isGameWon():
-					#TODO: pop-up here
+					winDialog = WinDialog(spider)
 					pass
 	
 	def handle_stock_click(self, event):
@@ -98,7 +99,7 @@ class GameCanvas(Canvas):
 			col = self.spider.columns[colNum]
 			
 			#This is a clickable column so you can drag cards into it. YES THERE NEEDS TO BE FILL YOU CAN'T LEAVE IT TRANSPARENT
-			invisible_column = self.create_rectangle(30+colNum*50, 20, 30+colNum*50+CARD_SIZE.x, 200, outline="green", fill="green", width=2)
+			invisible_column = self.create_rectangle(30+colNum*50, 20, 50+colNum*50+CARD_SIZE.x, 200, outline="green", fill="green", width=2)
 			self.tag_bind(invisible_column, "<1>", lambda e, x=colNum: self.handle_column_click(e,x))
 
 			for i in range(len(col)):
@@ -106,7 +107,7 @@ class GameCanvas(Canvas):
 				image = self.pool.get_image(col[i])
 
 				#args are xPos, yPos, image, anchor
-				img_obj = self.create_image(50+colNum*50,50+i*16,image=image,anchor=CENTER)
+				img_obj = self.create_image(50+colNum*50,60+i*16,image=image,anchor=CENTER)
 
 				#DEBUG DRAW
 				#self.create_rectangle(50+colNum*50,50+i*16, 50+colNum*50+64,50+i*16+64, outline="orange", fill="", width=2)
@@ -122,6 +123,8 @@ class GameCanvas(Canvas):
             text="Click to draw more cards")
 		self.create_text(10, SCREEN_HEIGHT-70-40, anchor=W, font="Ubuntu",
             text="Completed cards go here")
+		self.create_text(30, 20, anchor=W, font="Ubuntu",
+			text=f"Moves taken: {spider.moves}")
 		
 		# if spider.debug_mode:
 		# 	self.create_text(10, SCREEN_HEIGHT-200, anchor=W, font="Ubuntu",
@@ -138,11 +141,12 @@ class GameCanvas(Canvas):
 
 		if (self.selectedCard.IsPositive()): # TODO: Make the highlight around the card.
 			#For some insane reason create_rectangle is x1,y1, x2,y2 instead of x,y,w,h
-			src = Vector2(self.selectedCard.x*50+29, self.selectedCard.y*16+20)
+			src = Vector2(self.selectedCard.x*50+29, self.selectedCard.y*16+30)
 			
 			rect_height = src.y+CARD_SIZE.y+16*(spider.numValidDescending(self.selectedCard.x, self.selectedCard.y)-1)
 
 			self.create_rectangle(src.x, src.y, src.x+CARD_SIZE.x, rect_height, outline="orange", fill="", width=2)
+
 
 class MenuBar(Menu):
 	def __init__(self, root, canvas:GameCanvas, spider:SpiderGame, *args, **kwargs):
@@ -169,7 +173,10 @@ class MenuBar(Menu):
 
 		self.add_cascade(label="Difficulty Options", menu=debugOptions)
 
-		self.add_cascade(label="How To Play")
+		helpMenu = Menu(self, tearoff=0)
+		helpMenu.add_cascade(label="Help", command=self.showHelpMenu)
+		
+		self.add_cascade(label="How To Play", menu=helpMenu)
 
 		root.config(menu=self)
 		return
@@ -194,11 +201,37 @@ class MenuBar(Menu):
 				#print("'"+setting+"'")
 				return setting=="1"
 		return False
+	def showHelpMenu(self):
+		helpMenu = HelpDialog(self)
 
+
+class WinDialog(Toplevel):
+	def __init__(self, spider:SpiderGame, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._frame = Frame(self)
+		self._label = Label(self._frame, text=f"You cleared all of the cards!\nTotal moves taken: {spider.moves}")
+		self._frame.pack()
+		self._label.pack()
+		self.title("You won!")
+		self.geometry("250x150")
+		self.resizable(False, False)
+		self.wait_window()
+
+
+class HelpDialog(Toplevel):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._frame = Frame(self)
+		self._label = Label(self._frame, text="no idea.")
+		self._frame.pack()
+		self._label.pack()
+		self.title("How to play Spider Solitaire")
+		self.geometry("250x300")
+		self.resizable(False, False)
+		self.wait_window()
 
 
 if __name__ == "__main__":
-
 
 	root = Tk()
 	spider = SpiderGame()
@@ -207,7 +240,8 @@ if __name__ == "__main__":
 	canvas = GameCanvas(root, spider)
 	menuBar = MenuBar(root, canvas, spider)
 	canvas.pack(expand=True, fill="both")
-	
+
+	root.title("Spider Solitaire")
 	root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
 	root.resizable(False, False)
 	root.mainloop()
