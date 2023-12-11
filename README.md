@@ -1,12 +1,6 @@
 # Solitaire
 This is a solitaire game in Python & Tk
 
-# TODO
-- GUI
-- card game logic
-- Canvas drawing
-- Save high scores, load high scores
-
 # Credits
 
 Card sprites are from https://kenney.nl/assets/playing-cards-pack
